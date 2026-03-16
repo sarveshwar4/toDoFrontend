@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login.jsx";
 import Signup from "./pages/signUp.jsx";
 import Dashboard from "./pages/dashboard.jsx";
-import AddTodo from "./pages/AddTodos.jsx";
+import AddTodo from "./pages/addTodos.jsx";
 import EditTodo from "./pages/EditTodo.jsx";
 import Layout from "./pages/Layout.jsx";
 import Togglecontext from "./utils/Togglecontext.js";
