@@ -18,7 +18,7 @@ const Signup = () => {
         password
       });
 
-      navigate("/login");
+      navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data || "Signup error");
     }
