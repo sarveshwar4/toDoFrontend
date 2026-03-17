@@ -23,7 +23,6 @@ const TodoItem = ({ todo, setTodos }) => {
     try {
       const res = await API.put(`/todo/markAsCompleted/${todo._id}`);
       setIsCompleted(res.data.todo.isCompleted);
-      // Sync parent state if needed
       setTodos(prev => prev.map(t => t._id === todo._id ? { ...t, isCompleted: res.data.todo.isCompleted } : t));
     } catch (err) {
       console.error("Toggle failed", err);
@@ -31,58 +30,72 @@ const TodoItem = ({ todo, setTodos }) => {
   };
 
   return (
-    <div className={`group relative overflow-hidden rounded-xl border transition-all duration-200 
+    <div className={`group relative p-4 mb-3 border rounded-xl transition-all duration-200 
       ${isCompleted 
-        ? "bg-gray-50 border-gray-200 opacity-75" 
-        : "bg-white border-gray-100 shadow-sm hover:shadow-md hover:border-[#E84E36]/20"
+        ? "bg-gray-50 border-gray-200 opacity-80" 
+        : "bg-white border-gray-100 hover:shadow-sm hover:border-gray-200"
       }`}>
       
-      {/* Visual indicator for completed tasks */}
-      {isCompleted && (
-        <div className="absolute left-0 top-0 h-full w-1 bg-green-500" />
-      )}
-
-      <div className="flex flex-col md:flex-row md:items-center justify-between p-5 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         
-        {/* Todo Content */}
         <div className="flex-1 min-w-0">
-          <h3 className={`text-lg font-bold tracking-tight mb-0.5 truncate transition-all
-            ${isCompleted ? "line-through text-gray-400" : "text-gray-800"}`}>
-            {todo.title}
-          </h3>
-          <p className={`text-sm leading-relaxed max-w-xl
-            ${isCompleted ? "text-gray-400" : "text-gray-500"}`}>
+          <div className="flex items-center gap-2 mb-1">
+            {/* Simple Priority Dot */}
+            <span className={`w-2 h-2 rounded-full ${isCompleted ? "bg-gray-300" : "bg-[#E44232]"}`}></span>
+            
+            <h3 className={`text-[16px] font-bold tracking-tight transition-all
+              ${isCompleted ? "line-through text-gray-400" : "text-gray-900"}`}>
+              {todo.title}
+            </h3>
+          </div>
+
+          <p className={`text-[13px] leading-snug mb-3
+            ${isCompleted ? "text-gray-400" : "text-gray-600"}`}>
             {todo.description}
           </p>
+
+          {/* New Metadata Section - Looking Like Human Written Code */}
+          <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400 uppercase tracking-tighter">
+            <div className="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {/* Fallback to 'Today' if createdAt is missing */}
+              <span>Registered: {todo.createdAt ? new Date(todo.createdAt).toLocaleDateString('en-GB') : "Recently"}</span>
+            </div>
+            
+            <div className="flex items-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? "bg-green-500" : "bg-orange-400"}`}></span>
+              <span>{isCompleted ? "Done" : "Pending"}</span>
+            </div>
+          </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={handleEdit}
-            className="p-2.5 rounded-lg bg-[#EBF2FF] text-blue-600 hover:bg-blue-100 transition-colors"
-            title="Edit Task"
+            className="px-3 py-1.5 rounded-md text-[13px] font-bold text-blue-600 hover:bg-blue-50 transition-colors"
           >
-            <span className="text-sm font-bold px-1">Edit</span>
+            Edit
           </button>
 
           <button
             onClick={handleDelete}
-            className="p-2.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
-            title="Delete Task"
+            className="px-3 py-1.5 rounded-md text-[13px] font-bold text-red-500 hover:bg-red-50 transition-colors"
           >
-            <span className="text-sm font-bold px-1">Delete</span>
+            Delete
           </button>
 
           <button
             onClick={handleIsCompletedToggle}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all shadow-sm
+            className={`ml-2 rounded-lg px-4 py-2 text-[13px] font-bold transition-all shadow-sm
               ${isCompleted
-                ? "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50"
-                : "bg-green-500 text-white hover:bg-green-600 active:scale-95"
+                ? "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                : "bg-[#E44232] text-white hover:bg-[#c3392b] active:scale-95"
               }`}
           >
-            {isCompleted ? "✓ Done" : "Mark Complete"}
+            {isCompleted ? "✓ Completed" : "Mark Complete"}
           </button>
         </div>
       </div>
