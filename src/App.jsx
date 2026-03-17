@@ -10,6 +10,7 @@ import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 function App() {
   const isLoggedIn = !!localStorage.getItem("token");
+  console.log("isLoggedIn:", isLoggedIn);
   return (
     <Routes>
       <Route path="/" element={isLoggedIn ? <Navigate to="/login" replace /> : <Navigate to="/dashboard" replace />} />
