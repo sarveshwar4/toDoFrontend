@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import Login from "./pages/login.jsx";
 import Signup from "./pages/signUp.jsx";
 import Dashboard from "./pages/dashboard.jsx";
@@ -10,16 +9,10 @@ import Togglecontext from "./utils/Togglecontext.js";
 import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 function App() {
-
   const isLoggedIn = !!localStorage.getItem("token");
-
   return (
     <Routes>
-
-      <Route path="/" element={isLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
-
-
-      {/* Parent Route */}
+      <Route path="/" element={isLoggedIn ? <Navigate to="/login" replace /> : <Navigate to="/dashboard" replace />} />
       <Route element={<Layout />}>
        <Route path="/login" element={<Login />} />
        <Route path="/signup" element={<Signup />} />
@@ -29,9 +22,7 @@ function App() {
         <Route path="/add" element={<AddTodo />} />
         <Route path="/edit/:id" element={<EditTodo />} />
       </Route>
-
     </Routes>
-  );
+  );  
 }
-
 export default App;
