@@ -37,12 +37,14 @@ const Dashboard = () => {
   const markAllCompleted = async () => {
     try {
       await API.put(`/todo/markallcompleted`);
-      setTodos((prev) =>
-        prev.map((todo) => ({
-          ...todo,
-          isCompleted: true,
-        })),
-      );
+      // reload the page
+      document.location.reload();
+      // setTodos((prev) =>
+      //   prev.map((todo) => ({
+      //     ...todo,
+      //     isCompleted: true,
+      //   })),
+      // );
     } catch (err) {
       console.error("Error updating todos", err);
     }

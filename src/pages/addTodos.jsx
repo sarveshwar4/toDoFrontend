@@ -5,11 +5,15 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 const AddTodo = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState(""); // New state for deadline
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   
   const { darkMode } = useOutletContext();
   const navigate = useNavigate();
+
+  // Get today's date in YYYY-MM-DD format for the 'min' attribute
+  const today = new Date().toISOString().split("T")[0];
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -23,7 +27,8 @@ const AddTodo = () => {
     setError("");
 
     try {
-      await API.post("/todo/add", { title, description });
+      // Sending title, description, and the new dueDate field
+      await API.post("/todo/add", { title, description, dueDate });
       navigate("/dashboard");
     } catch (err) {
       setError("Failed to add todo. Please try again later.");
@@ -61,7 +66,7 @@ const AddTodo = () => {
           </div>
         )}
 
-        <form className="space-y-6" onSubmit={handleAdd}>
+        <form className="space-y-5" onSubmit={handleAdd}>
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest mb-2 px-1 text-gray-400">Task Title</label>
             <input
@@ -79,7 +84,7 @@ const AddTodo = () => {
           <div>
             <label className="block text-xs font-bold uppercase tracking-widest mb-2 px-1 text-gray-400">Description</label>
             <textarea
-              rows="4"
+              rows="3"
               className={`w-full rounded-xl px-4 py-3.5 outline-none transition-all resize-none ${
                 darkMode 
                 ? "bg-slate-800 text-white focus:ring-2 focus:ring-[#E84E36]/50" 
@@ -91,23 +96,41 @@ const AddTodo = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full rounded-xl py-4 text-sm font-bold text-white transition-all shadow-lg ${
-              isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-[#E84E36] hover:opacity-90 active:scale-[0.97]"
-            }`}
-          >
-            {isLoading ? "Saving..." : "Save Task"}
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            className="w-full text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors py-2"
-          >
-            Cancel
-          </button>
+          {/* New Due Date Field */}
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-widest mb-2 px-1 text-gray-400">Set Deadline (Optional)</label>
+            <input
+              type="date"
+              min={today}
+              className={`w-full rounded-xl px-4 py-3.5 outline-none transition-all ${
+                darkMode 
+                ? "bg-slate-800 text-white focus:ring-2 focus:ring-[#E84E36]/50" 
+                : "bg-[#EBF2FF] text-gray-800 focus:ring-2 focus:ring-[#E84E36]/20"
+              }`}
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full rounded-xl py-4 text-sm font-bold text-white transition-all shadow-lg ${
+                isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-[#E84E36] hover:opacity-90 active:scale-[0.97]"
+              }`}
+            >
+              {isLoading ? "Saving..." : "Save Task"}
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="w-full text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors py-4"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>

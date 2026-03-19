@@ -6,15 +6,39 @@ const TodoItem = ({ todo, setTodos }) => {
   const navigate = useNavigate();
   const [isCompleted, setIsCompleted] = useState(todo.isCompleted);
 
-
   const registrationDate = new Date(todo.createdAt || Date.now());
-  const expirationDate = new Date(registrationDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+  const expirationDate = todo.dueDate ? new Date(todo.dueDate) : null;
   
- 
-  const isCancelled = !isCompleted && new Date() > expirationDate;
-  
-  
-  const isOverdue = !isCompleted && todo.deadline && new Date(todo.deadline) < new Date();
+  // Logic: Check if current time has passed the dueDate
+  const isCancelled = !isCompleted && expirationDate && new Date() > expirationDate;
+
+  // --- NEW LOGIC: GET REMAINING TIME ---
+  const getRemainingTime = (dueDate) => {
+    if (!dueDate) return null;
+
+    const target = new Date(dueDate);
+    const now = new Date();
+    const diffInMs = target - now;
+
+    if (diffInMs <= 0) return "Expired";
+
+    const totalMinutes = Math.floor(diffInMs / (1000 * 60));
+    const totalHours = Math.floor(totalMinutes / 60);
+    
+    const d = Math.floor(totalHours / 24);
+    const h = totalHours % 24;
+    const m = totalMinutes % 60;
+
+    let result = "";
+    if (d > 0) result += `${d}d `;
+    if (h > 0) result += `${h}h `;
+    if (m > 0) result += `${m}m `;
+
+    return result.trim() + " left";
+  };
+
+  const timeLeft = getRemainingTime(todo.dueDate);
+  // --------------------------------------
 
   const handleDelete = async () => {
     try {
@@ -50,7 +74,7 @@ const TodoItem = ({ todo, setTodos }) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className={`w-2.5 h-2.5 rounded-full 
-              ${isCompleted ? "bg-gray-300" : isCancelled ? "bg-black" : (isOverdue ? "bg-red-600 animate-pulse" : "bg-[#E44232]")}`}>
+              ${isCompleted ? "bg-gray-300" : isCancelled ? "bg-black" : "bg-[#E44232]"}`}>
             </span>
             
             <h3 className={`text-[16px] font-bold tracking-tight transition-all
@@ -65,7 +89,7 @@ const TodoItem = ({ todo, setTodos }) => {
           </p>
 
           <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-[10px] font-bold text-gray-400 uppercase tracking-tight">
-           
+            
             <div className="flex items-center gap-1">
                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -73,14 +97,17 @@ const TodoItem = ({ todo, setTodos }) => {
               <span>Reg: {registrationDate.toLocaleDateString('en-GB')}</span>
             </div>
 
-           
-            <div className={`flex items-center gap-1 ${isCancelled ? "text-red-600" : "text-gray-500"}`}>
+            {/* Displaying Remaining Time OR Expiration Date */}
+            <div className={`flex items-center gap-1 ${isCancelled ? "text-red-600" : "text-blue-600"}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Expires: {expirationDate.toLocaleDateString('en-GB')}</span>
+              <span>
+                {isCompleted 
+                  ? `Due: ${expirationDate ? expirationDate.toLocaleDateString('en-GB') : "No Limit"}`
+                  : timeLeft || "No Deadline"}
+              </span>
             </div>
-            
             
             <div className="flex items-center gap-1">
               <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? "bg-green-500" : isCancelled ? "bg-black" : "bg-orange-400"}`}></span>
@@ -89,7 +116,6 @@ const TodoItem = ({ todo, setTodos }) => {
           </div>
         </div>
 
-        
         <div className="flex items-center gap-1">
           {!isCancelled && (
             <>
