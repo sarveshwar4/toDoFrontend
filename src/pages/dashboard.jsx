@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../utils/api";
-import TodoItem from "./TodoItem";
+import TodoItem from "../component/TodoItem";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 const Dashboard = () => {
   const [todos, setTodos] = useState([]);

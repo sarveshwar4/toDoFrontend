@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import DarkModeToggle from "../pages/darmodeToggle";
+import DarkModeToggle from "../component/darkmodeToggle";
 import API from "../utils/api";
 
 const Layout = () => {
